@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 /* =========================
    RESET
@@ -13,41 +13,32 @@
 :root {
     --bg-one: #eaf8ff;
     --bg-two: #b9e8ff;
-
     --text: #102a43;
     --muted: #61758a;
-
     --card: rgba(255, 255, 255, 0.64);
     --card-border: rgba(255, 255, 255, 0.85);
-
     --input-bg: rgba(255, 255, 255, 0.75);
-
     --accent: #087ea4;
     --accent-dark: #075985;
-
     --shadow: 0 15px 45px rgba(24, 76, 104, 0.12);
-
     --radius: 24px;
 }
 
-body.dark {
+/* Dark Mode */
+
+body.dark,
+body.dark-mode {
     --bg-one: #071a35;
     --bg-two: #123b60;
-
     --text: #f1f7ff;
     --muted: #abc0d5;
-
     --card: rgba(14, 42, 72, 0.72);
     --card-border: rgba(148, 190, 222, 0.16);
-
     --input-bg: rgba(10, 31, 54, 0.75);
-
     --accent: #62c7ed;
     --accent-dark: #8bdbff;
-
     --shadow: 0 15px 45px rgba(0, 0, 0, 0.24);
 }
-
 
 /* =========================
    BODY
@@ -55,9 +46,7 @@ body.dark {
 
 body {
     min-height: 100vh;
-
     font-family: "Inter", Arial, sans-serif;
-
     color: var(--text);
 
     background:
@@ -79,7 +68,8 @@ body {
     overflow-x: hidden;
 }
 
-body.dark {
+body.dark,
+body.dark-mode {
     background:
         radial-gradient(
             circle at 90% 5%,
@@ -93,7 +83,6 @@ body.dark {
         );
 }
 
-
 /* =========================
    WEATHER BACKGROUND
 ========================= */
@@ -101,13 +90,9 @@ body.dark {
 .weather-background {
     position: fixed;
     inset: 0;
-
     pointer-events: none;
-
     overflow: hidden;
-
     z-index: 0;
-
     opacity: 1;
 
     transition:
@@ -118,18 +103,12 @@ body.dark {
 .weather-background::before,
 .weather-background::after {
     content: "";
-
     position: absolute;
-
     width: 360px;
     height: 360px;
-
     border-radius: 50%;
-
     filter: blur(80px);
-
     opacity: 0.2;
-
     background: #ffffff;
 
     transition:
@@ -145,10 +124,8 @@ body.dark {
 .weather-background::after {
     bottom: -180px;
     left: -100px;
-
     background: #38bdf8;
 }
-
 
 /* =========================
    WEATHER STATES
@@ -213,7 +190,6 @@ body.dark {
         );
 }
 
-
 /* =========================
    RAIN EFFECT
 ========================= */
@@ -221,11 +197,8 @@ body.dark {
 .rain-effect {
     position: absolute;
     inset: 0;
-
     overflow: hidden;
-
     opacity: 0;
-
     transition: opacity 0.6s ease;
 }
 
@@ -235,13 +208,10 @@ body.dark {
 
 .rain-drop {
     position: absolute;
-
     top: -120px;
     left: var(--x);
-
     width: 2px;
     height: var(--height);
-
     border-radius: 999px;
 
     background:
@@ -253,14 +223,12 @@ body.dark {
         );
 
     filter: blur(0.2px);
-
     transform: rotate(15deg);
 
     animation:
         rainFall var(--duration) linear infinite;
 
     animation-delay: var(--delay);
-
     opacity: var(--opacity);
 }
 
@@ -282,12 +250,10 @@ body.dark {
     }
 }
 
-
 /* Rain glow */
 
 .rain-effect::after {
     content: "";
-
     position: absolute;
     inset: 0;
 
@@ -301,7 +267,6 @@ body.dark {
     pointer-events: none;
 }
 
-
 /* =========================
    SNOW EFFECT
 ========================= */
@@ -309,11 +274,8 @@ body.dark {
 .snow-effect {
     position: absolute;
     inset: 0;
-
     overflow: hidden;
-
     opacity: 0;
-
     transition: opacity 0.6s ease;
 }
 
@@ -323,15 +285,11 @@ body.dark {
 
 .snowflake {
     position: absolute;
-
     top: -30px;
     left: var(--x);
-
     width: var(--size);
     height: var(--size);
-
     border-radius: 50%;
-
     background: rgba(255, 255, 255, 0.9);
 
     box-shadow:
@@ -341,7 +299,6 @@ body.dark {
         snowFall var(--duration) linear infinite;
 
     animation-delay: var(--delay);
-
     opacity: var(--opacity);
 }
 
@@ -365,7 +322,6 @@ body.dark {
     }
 }
 
-
 /* =========================
    CLOUD EFFECT
 ========================= */
@@ -373,11 +329,8 @@ body.dark {
 .cloud-effect {
     position: absolute;
     inset: 0;
-
     overflow: hidden;
-
     opacity: 0;
-
     transition: opacity 0.8s ease;
 }
 
@@ -388,13 +341,10 @@ body.dark {
 
 .weather-cloud {
     position: absolute;
-
     top: var(--top);
     left: -280px;
-
     width: var(--width);
     height: var(--height);
-
     border-radius: 100px;
 
     background:
@@ -405,7 +355,6 @@ body.dark {
         );
 
     filter: blur(1px);
-
     opacity: var(--opacity);
 
     animation:
@@ -417,18 +366,14 @@ body.dark {
 .weather-cloud::before,
 .weather-cloud::after {
     content: "";
-
     position: absolute;
-
     border-radius: 50%;
-
     background: inherit;
 }
 
 .weather-cloud::before {
     width: 55%;
     height: 120%;
-
     left: 15%;
     bottom: 20%;
 }
@@ -436,7 +381,6 @@ body.dark {
 .weather-cloud::after {
     width: 45%;
     height: 100%;
-
     right: 10%;
     bottom: 10%;
 }
@@ -451,20 +395,16 @@ body.dark {
     }
 }
 
-
 /* =========================
    SUN EFFECT
 ========================= */
 
 .sun-effect {
     position: absolute;
-
     top: -100px;
     right: 4%;
-
     width: 300px;
     height: 300px;
-
     border-radius: 50%;
 
     background:
@@ -477,9 +417,7 @@ body.dark {
         );
 
     filter: blur(5px);
-
     opacity: 0;
-
     transform: scale(0.7);
 
     transition:
@@ -491,7 +429,6 @@ body.dark {
 
 .weather-background.clear .sun-effect {
     opacity: 1;
-
     transform: scale(1);
 }
 
@@ -506,7 +443,6 @@ body.dark {
     }
 }
 
-
 /* =========================
    FOG EFFECT
 ========================= */
@@ -514,11 +450,8 @@ body.dark {
 .fog-effect {
     position: absolute;
     inset: 0;
-
     overflow: hidden;
-
     opacity: 0;
-
     transition: opacity 0.8s ease;
 }
 
@@ -529,21 +462,16 @@ body.dark {
 .fog-effect::before,
 .fog-effect::after {
     content: "";
-
     position: absolute;
-
     width: 150%;
     height: 35%;
-
     left: -25%;
-
     border-radius: 50%;
-
     background: rgba(255, 255, 255, 0.18);
-
     filter: blur(35px);
 
-    animation: fogMove 14s ease-in-out infinite alternate;
+    animation:
+        fogMove 14s ease-in-out infinite alternate;
 }
 
 .fog-effect::before {
@@ -552,9 +480,7 @@ body.dark {
 
 .fog-effect::after {
     top: 55%;
-
     animation-duration: 18s;
-
     opacity: 0.7;
 }
 
@@ -568,23 +494,17 @@ body.dark {
     }
 }
 
-
 /* =========================
    MAIN CONTAINER
 ========================= */
 
 .app-container {
     position: relative;
-
     z-index: 1;
-
     width: min(1100px, 92%);
-
     margin: 0 auto;
-
     padding: 30px 0 20px;
 }
-
 
 /* =========================
    HEADER
@@ -592,51 +512,33 @@ body.dark {
 
 .app-header {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
-
     gap: 20px;
-
     margin-bottom: 34px;
 }
 
 .brand {
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
     color: var(--text);
-
     text-decoration: none;
-
     font-size: 25px;
-
     font-weight: 800;
-
     letter-spacing: -1px;
 }
 
 .brand-icon {
     display: grid;
-
     place-items: center;
-
     width: 42px;
     height: 42px;
-
     border-radius: 14px;
-
     background: var(--card);
-
     border: 1px solid var(--card-border);
-
     box-shadow: var(--shadow);
-
     font-size: 23px;
-
     backdrop-filter: blur(15px);
 }
 
@@ -644,47 +546,31 @@ body.dark {
 .primary-btn,
 .secondary-btn {
     border: none;
-
     font-family: inherit;
-
     font-size: 13px;
-
     font-weight: 600;
-
     cursor: pointer;
-
     transition: all 0.25s ease;
 }
 
 .icon-btn {
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     padding: 12px 16px;
-
     border-radius: 13px;
-
     color: var(--text);
-
     background: var(--card);
-
     border: 1px solid var(--card-border);
-
     box-shadow: var(--shadow);
-
     backdrop-filter: blur(15px);
 }
 
 .icon-btn:hover {
     transform: translateY(-2px);
-
     box-shadow:
         0 18px 35px rgba(24, 76, 104, 0.16);
 }
-
 
 /* =========================
    SEARCH
@@ -692,61 +578,39 @@ body.dark {
 
 .search-section {
     display: flex;
-
     align-items: center;
-
     gap: 10px;
-
     margin-bottom: 5px;
 }
 
 .search-box {
     position: relative;
-
     display: flex;
-
     align-items: center;
-
     flex: 1;
-
     min-width: 0;
 }
 
 .search-icon {
     position: absolute;
-
     left: 16px;
-
     font-size: 27px;
-
     color: var(--muted);
-
     transform: rotate(-20deg);
-
     pointer-events: none;
 }
 
 .search-box input {
     width: 100%;
-
     height: 52px;
-
     padding: 0 42px 0 48px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 15px;
-
     outline: none;
-
     color: var(--text);
-
     background: var(--input-bg);
-
     font-family: inherit;
-
     font-size: 14px;
-
     backdrop-filter: blur(16px);
 
     transition:
@@ -761,48 +625,34 @@ body.dark {
 
 .search-box input:focus {
     border-color: var(--accent);
-
     box-shadow:
         0 0 0 3px rgba(8, 126, 164, 0.12);
-
     transform: translateY(-1px);
 }
 
 .clear-btn {
     position: absolute;
-
     right: 12px;
-
     width: 25px;
     height: 25px;
-
     border: none;
-
     border-radius: 50%;
-
     color: var(--muted);
-
     background: transparent;
-
     font-size: 21px;
-
     cursor: pointer;
 }
 
 .clear-btn:hover {
     color: var(--text);
-
     background: rgba(128, 128, 128, 0.1);
 }
 
 .primary-btn,
 .secondary-btn {
     min-height: 52px;
-
     padding: 0 20px;
-
     border-radius: 15px;
-
     white-space: nowrap;
 }
 
@@ -822,7 +672,6 @@ body.dark {
 
 .primary-btn:hover {
     transform: translateY(-2px);
-
     filter: brightness(1.07);
 
     box-shadow:
@@ -831,11 +680,8 @@ body.dark {
 
 .secondary-btn {
     color: var(--text);
-
     background: var(--card);
-
     border: 1px solid var(--card-border);
-
     backdrop-filter: blur(15px);
 }
 
@@ -843,21 +689,15 @@ body.dark {
     transform: translateY(-2px);
 }
 
-
 /* Search hint */
 
 .search-hint {
     margin: 8px 0 12px;
-
     color: var(--muted);
-
     font-size: 11px;
-
     text-align: center;
-
     opacity: 0.8;
 }
-
 
 /* =========================
    STATUS + LOADING
@@ -865,39 +705,27 @@ body.dark {
 
 .message {
     min-height: 24px;
-
     margin-bottom: 10px;
-
     color: var(--muted);
-
     font-size: 13px;
-
     text-align: center;
 }
 
 .loading {
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     gap: 12px;
-
     padding: 25px;
-
     color: var(--muted);
 }
 
 .spinner {
     width: 22px;
     height: 22px;
-
     border: 3px solid rgba(128, 128, 128, 0.25);
-
     border-top-color: var(--accent);
-
     border-radius: 50%;
-
     animation: spin 0.8s linear infinite;
 }
 
@@ -911,26 +739,18 @@ body.dark {
     }
 }
 
-
 /* =========================
    HERO CARD
 ========================= */
 
 .hero-card {
     position: relative;
-
     overflow: hidden;
-
     padding: 32px;
-
     border: 1px solid var(--card-border);
-
     border-radius: var(--radius);
-
     background: var(--card);
-
     box-shadow: var(--shadow);
-
     backdrop-filter: blur(20px);
 
     transition:
@@ -945,15 +765,11 @@ body.dark {
 
 .hero-card::before {
     content: "";
-
     position: absolute;
-
     top: -130px;
     right: -100px;
-
     width: 330px;
     height: 330px;
-
     border-radius: 50%;
 
     background:
@@ -964,66 +780,46 @@ body.dark {
         );
 
     filter: blur(25px);
-
     pointer-events: none;
 }
 
 .hero-top {
     position: relative;
-
     z-index: 1;
-
     display: flex;
-
     align-items: flex-start;
     justify-content: space-between;
-
     gap: 20px;
 }
 
 .eyebrow {
     margin-bottom: 8px;
-
     color: var(--muted);
-
     font-size: 10px;
-
     font-weight: 800;
-
     letter-spacing: 2px;
 }
 
 .hero-top h1 {
     font-size: clamp(25px, 4vw, 36px);
-
     font-weight: 800;
-
     letter-spacing: -1px;
 }
 
 .date-text {
     margin-top: 8px;
-
     color: var(--muted);
-
     font-size: 13px;
 }
 
 .location-badge {
     padding: 8px 12px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 30px;
-
     color: var(--muted);
-
     background: rgba(255, 255, 255, 0.13);
-
     font-size: 11px;
-
     white-space: nowrap;
-
     backdrop-filter: blur(10px);
 }
 
@@ -1031,24 +827,17 @@ body.dark {
     color: #28b57c;
 }
 
-
 /* =========================
    CURRENT WEATHER
 ========================= */
 
 .current-weather {
     position: relative;
-
     z-index: 1;
-
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 30px;
-
     align-items: center;
-
     margin-top: 30px;
 }
 
@@ -1058,9 +847,7 @@ body.dark {
 
 .main-weather-icon {
     min-height: 95px;
-
     font-size: 88px;
-
     line-height: 1.1;
 
     filter:
@@ -1083,46 +870,32 @@ body.dark {
 
 .temperature {
     margin-top: 8px;
-
     font-size: clamp(65px, 9vw, 100px);
-
     font-weight: 800;
-
     line-height: 1;
-
     letter-spacing: -5px;
 }
 
 .temperature sup {
     position: relative;
-
     top: -32px;
-
     margin-left: 5px;
-
     font-size: 24px;
-
     font-weight: 500;
-
     letter-spacing: 0;
 }
 
 .temperature-area h2 {
     margin-top: 14px;
-
     font-size: 18px;
-
     font-weight: 600;
 }
 
 .feels-like {
     margin-top: 8px;
-
     color: var(--muted);
-
     font-size: 13px;
 }
-
 
 /* =========================
    WEATHER DETAILS
@@ -1130,28 +903,19 @@ body.dark {
 
 .weather-details {
     display: grid;
-
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
-
     gap: 12px;
 }
 
 .detail-item {
     display: flex;
-
     align-items: center;
-
     gap: 12px;
-
     padding: 17px 14px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 17px;
-
     background: rgba(255, 255, 255, 0.12);
-
     backdrop-filter: blur(10px);
 
     transition:
@@ -1161,32 +925,23 @@ body.dark {
 
 .detail-item:hover {
     transform: translateY(-3px);
-
     background: rgba(255, 255, 255, 0.18);
 }
 
 .detail-icon {
     display: grid;
-
     place-items: center;
-
     flex-shrink: 0;
-
     width: 42px;
     height: 42px;
-
     border-radius: 13px;
-
     background: rgba(255, 255, 255, 0.18);
-
     font-size: 21px;
 }
 
 .detail-item p {
     margin-bottom: 5px;
-
     color: var(--muted);
-
     font-size: 11px;
 }
 
@@ -1194,39 +949,27 @@ body.dark {
     font-size: 15px;
 }
 
-
 /* =========================
    SUN CARD
 ========================= */
 
 .sun-card {
     display: flex;
-
     align-items: center;
     justify-content: space-around;
-
     gap: 20px;
-
     margin-top: 20px;
-
     padding: 22px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 20px;
-
     background: var(--card);
-
     box-shadow: var(--shadow);
-
     backdrop-filter: blur(20px);
 }
 
 .sun-item {
     display: flex;
-
     align-items: center;
-
     gap: 15px;
 }
 
@@ -1239,9 +982,7 @@ body.dark {
 
 .sun-item p {
     margin-bottom: 6px;
-
     color: var(--muted);
-
     font-size: 12px;
 }
 
@@ -1251,12 +992,9 @@ body.dark {
 
 .sun-line {
     width: 1px;
-
     height: 52px;
-
     background: var(--card-border);
 }
-
 
 /* =========================
    FORECAST SECTIONS
@@ -1268,42 +1006,29 @@ body.dark {
 
 .section-heading {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
-
     gap: 20px;
-
     margin-bottom: 17px;
 }
 
 .section-heading h2 {
     font-size: 21px;
-
     letter-spacing: -0.5px;
 }
 
 .section-symbol {
     display: grid;
-
     place-items: center;
-
     width: 40px;
     height: 40px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 13px;
-
     color: var(--muted);
-
     background: var(--card);
-
     font-size: 23px;
-
     backdrop-filter: blur(15px);
 }
-
 
 /* =========================
    HOURLY FORECAST
@@ -1311,13 +1036,9 @@ body.dark {
 
 .hourly-forecast {
     display: flex;
-
     gap: 12px;
-
     overflow-x: auto;
-
     padding: 4px 2px 15px;
-
     scrollbar-width: thin;
 
     scrollbar-color:
@@ -1335,31 +1056,20 @@ body.dark {
 
 .hourly-forecast::-webkit-scrollbar-thumb {
     border-radius: 20px;
-
     background: var(--accent);
 }
 
 .hour-card {
     flex: 0 0 112px;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     gap: 12px;
-
     padding: 20px 10px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 19px;
-
     background: var(--card);
-
     box-shadow: var(--shadow);
-
     backdrop-filter: blur(16px);
 
     transition:
@@ -1391,9 +1101,7 @@ body.dark {
 
 .hour-label {
     color: var(--muted);
-
     font-size: 12px;
-
     font-weight: 600;
 }
 
@@ -1403,16 +1111,13 @@ body.dark {
 
 .hour-temp {
     font-size: 19px;
-
     font-weight: 800;
 }
 
 .hour-rain {
     color: #38a8dc;
-
     font-size: 11px;
 }
-
 
 /* =========================
    DAILY FORECAST
@@ -1420,13 +1125,11 @@ body.dark {
 
 .daily-forecast {
     display: grid;
-
     gap: 10px;
 }
 
 .day-card {
     display: grid;
-
     grid-template-columns:
         1.2fr
         0.8fr
@@ -1435,19 +1138,12 @@ body.dark {
         0.8fr;
 
     align-items: center;
-
     gap: 12px;
-
     padding: 17px 20px;
-
     border: 1px solid var(--card-border);
-
     border-radius: 17px;
-
     background: var(--card);
-
     box-shadow: var(--shadow);
-
     backdrop-filter: blur(15px);
 
     transition:
@@ -1457,30 +1153,24 @@ body.dark {
 
 .day-card:hover {
     transform: translateX(3px);
-
     background:
         rgba(255, 255, 255, 0.2);
 }
 
 .day-name {
     font-size: 13px;
-
     font-weight: 700;
 }
 
 .day-date {
     margin-top: 4px;
-
     color: var(--muted);
-
     font-size: 11px;
 }
 
 .day-weather {
     display: flex;
-
     align-items: center;
-
     gap: 10px;
 }
 
@@ -1490,21 +1180,15 @@ body.dark {
 
 .day-description {
     color: var(--muted);
-
     font-size: 11px;
 }
 
 .day-temp {
     display: flex;
-
     align-items: center;
-
     justify-content: flex-end;
-
     gap: 8px;
-
     font-size: 14px;
-
     font-weight: 700;
 }
 
@@ -1514,12 +1198,9 @@ body.dark {
 
 .day-rain {
     text-align: right;
-
     color: #2498cf;
-
     font-size: 12px;
 }
-
 
 /* =========================
    FOOTER
@@ -1527,18 +1208,12 @@ body.dark {
 
 .app-footer {
     margin-top: 40px;
-
     padding: 20px 0;
-
     border-top: 1px solid var(--card-border);
-
     color: var(--muted);
-
     text-align: center;
-
     font-size: 12px;
 }
-
 
 /* =========================
    RESPONSIVE DESIGN
@@ -1548,13 +1223,11 @@ body.dark {
 
     .app-container {
         width: min(94%, 600px);
-
         padding-top: 20px;
     }
 
     .current-weather {
         grid-template-columns: 1fr;
-
         gap: 30px;
     }
 
@@ -1585,7 +1258,6 @@ body.dark {
     }
 }
 
-
 @media (max-width: 500px) {
 
     .app-header {
@@ -1599,25 +1271,21 @@ body.dark {
     .brand-icon {
         width: 36px;
         height: 36px;
-
         font-size: 20px;
     }
 
     .icon-btn {
         padding: 10px 12px;
-
         font-size: 11px;
     }
 
     .hero-card {
         padding: 22px 16px;
-
         border-radius: 21px;
     }
 
     .hero-top {
         flex-direction: column;
-
         gap: 12px;
     }
 
@@ -1643,14 +1311,12 @@ body.dark {
 
     .detail-item {
         padding: 13px 10px;
-
         gap: 8px;
     }
 
     .detail-icon {
         width: 34px;
         height: 34px;
-
         font-size: 17px;
     }
 
@@ -1660,7 +1326,6 @@ body.dark {
 
     .sun-card {
         padding: 18px 12px;
-
         gap: 10px;
     }
 
@@ -1689,7 +1354,6 @@ body.dark {
             1fr auto;
 
         gap: 12px;
-
         padding: 15px;
     }
 
@@ -1719,7 +1383,6 @@ body.dark {
     }
 }
 
-
 /* =========================
    REDUCED MOTION
 ========================= */
@@ -1730,10 +1393,7 @@ body.dark {
     *::before,
     *::after {
         animation-duration: 0.01ms !important;
-
         animation-iteration-count: 1 !important;
-
         transition-duration: 0.01ms !important;
     }
 }
-
