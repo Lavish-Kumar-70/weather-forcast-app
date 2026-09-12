@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weather Forecast App</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ==========================================
+             HEADER
+        ========================================== -->
+
+        <div class="header">
+
+            <h1>
+                🌤️ Weather Forecast
+            </h1>
+
+            <button id="darkModeBtn">
+                🌙 Dark Mode
+            </button>
+
+        </div>
+
+
+        <!-- ==========================================
+             SEARCH
+        ========================================== -->
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name"
+            >
+
+            <button id="searchBtn">
+                Search
+            </button>
+
+            <button id="locationBtn">
+                📍 My Location
+            </button>
+
+        </div>
+
+
+        <!-- ==========================================
+             MESSAGE
+        ========================================== -->
+
+        <p id="message"></p>
+
+
+        <!-- ==========================================
+             CURRENT WEATHER
+        ========================================== -->
+
+        <div class="weather-card">
+
+            <!-- Rain Animation -->
+            <div
+                id="rainAnimation"
+                class="rain-animation">
+            </div>
+
+
+            <!-- City Name -->
+
+            <h2 id="cityName">
+                Search a city
+            </h2>
+
+
+            <!-- Weather Icon -->
+
+            <div
+                id="weatherIcon"
+                class="weather-icon">
+
+                🌤️
+
+            </div>
+
+
+            <!-- Temperature -->
+
+            <h3 id="temperature">
+                --°C
+            </h3>
+
+
+            <!-- Condition -->
+
+            <p id="condition">
+                Weather condition
+            </p>
+
+
+            <!-- ======================================
+                 WEATHER DETAILS
+            ====================================== -->
+
+            <div class="details">
+
+
+                <!-- Humidity -->
+
+                <div>
+
+                    <span>
+                        💧
+                    </span>
+
+                    <p>
+                        Humidity
+                    </p>
+
+                    <strong id="humidity">
+                        --%
+                    </strong>
+
+                </div>
+
+
+                <!-- Wind -->
+
+                <div>
+
+                    <span>
+                        💨
+                    </span>
+
+                    <p>
+                        Wind
+                    </p>
+
+                    <strong id="wind">
+                        -- km/h
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             SUNRISE / SUNSET
+        ========================================== -->
+
+        <div class="sun-card">
+
+
+            <!-- Sunrise -->
+
+            <div>
+
+                <span>
+                    🌅
+                </span>
+
+                <p>
+                    Sunrise
+                </p>
+
+                <strong id="sunrise">
+                    --:--
+                </strong>
+
+            </div>
+
+
+            <!-- Sunset -->
+
+            <div>
+
+                <span>
+                    🌇
+                </span>
+
+                <p>
+                    Sunset
+                </p>
+
+                <strong id="sunset">
+                    --:--
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ==========================================
+             24 HOUR FORECAST
+        ========================================== -->
+
+        <h2 class="forecast-title">
+            🕐 24 Hour Forecast
+        </h2>
+
+
+        <div
+            id="hourlyForecast"
+            class="hourly-container">
+        </div>
+
+
+        <!-- ==========================================
+             7 DAY FORECAST
+        ========================================== -->
+
+        <h2 class="forecast-title">
+            📅 7 Day Forecast
+        </h2>
+
+
+        <div
+            id="forecast"
+            class="forecast-container">
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+
