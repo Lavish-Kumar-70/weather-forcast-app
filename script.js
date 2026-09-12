@@ -1,1140 +1,341 @@
 // ==========================================
-// GET HTML ELEMENTS
+// WEATHERLY - WEATHER FORECAST APP
+// COMPLETE WORKING JAVASCRIPT
 // ==========================================
-
-const cityInput =
-    document.getElementById("cityInput");
-
-const searchBtn =
-    document.getElementById("searchBtn");
-
-const locationBtn =
-    document.getElementById("locationBtn");
-
-const darkModeBtn =
-    document.getElementById("darkModeBtn");
-
-const message =
-    document.getElementById("message");
-
-const cityName =
-    document.getElementById("cityName");
-
-const weatherIcon =
-    document.getElementById("weatherIcon");
-
-const temperature =
-    document.getElementById("temperature");
-
-const condition =
-    document.getElementById("condition");
-
-const humidity =
-    document.getElementById("humidity");
-
-const wind =
-    document.getElementById("wind");
-
-const sunrise =
-    document.getElementById("sunrise");
-
-const sunset =
-    document.getElementById("sunset");
-
-const hourlyForecast =
-    document.getElementById("hourlyForecast");
-
-const forecast =
-    document.getElementById("forecast");
-
-const rainAnimation =
-    document.getElementById("rainAnimation");
 
 
 // ==========================================
-// FIX: track in-flight requests so a new
-// search cancels any previous one that
-// hasn't resolved yet (prevents race
-// condition where an older, slower request
-// overwrites the UI after a newer one)
+// API
 // ==========================================
 
-let currentController = null;
+const GEOCODING_API =
+    "https://geocoding-api.open-meteo.com/v1/search";
 
+const WEATHER_API =
+    "https://api.open-meteo.com/v1/forecast";
 
-// ==========================================
-// SEARCH BUTTON
-// ==========================================
-
-searchBtn.addEventListener(
-    "click",
-    getWeather
-);
+const REVERSE_GEOCODING_API =
+    "https://nominatim.openstreetmap.org/reverse";
 
 
 // ==========================================
-// ENTER KEY
+// DOM ELEMENTS
 // ==========================================
 
-cityInput.addEventListener(
-    "keyup",
-    function (event) {
+const cityInput = document.querySelector("#cityInput");
+const searchBtn = document.querySelector("#searchBtn");
+const locationBtn = document.querySelector("#locationBtn");
+const darkModeBtn = document.querySelector("#darkModeBtn");
+const clearBtn = document.querySelector("#clearBtn");
 
-        if (event.key === "Enter") {
+const message = document.querySelector("#message");
+const loading = document.querySelector("#loading");
 
-            getWeather();
+const cityName = document.querySelector("#cityName");
+const currentDate = document.querySelector("#currentDate");
 
+const temperature = document.querySelector("#temperature");
+const weatherDescription = document.querySelector("#weatherDescription");
+const weatherIcon = document.querySelector("#weatherIcon");
+const feelsLike = document.querySelector("#feelsLike");
+
+const humidity = document.querySelector("#humidity");
+const windSpeed = document.querySelector("#windSpeed");
+const pressure = document.querySelector("#pressure");
+const uvIndex = document.querySelector("#uvIndex");
+
+const sunrise = document.querySelector("#sunrise");
+const sunset = document.querySelector("#sunset");
+
+const hourlyContainer =
+    document.querySelector("#hourlyForecast");
+
+const dailyContainer =
+    document.querySelector("#dailyForecast");
+
+
+// ==========================================
+// WEATHER EFFECT ELEMENTS
+// ==========================================
+
+const weatherBackground =
+    document.querySelector("#weatherBackground");
+
+const rainEffect =
+    document.querySelector("#rainEffect");
+
+const snowEffect =
+    document.querySelector("#snowEffect");
+
+const cloudEffect =
+    document.querySelector("#cloudEffect");
+
+const sunEffect =
+    document.querySelector("#sunEffect");
+
+const fogEffect =
+    document.querySelector("#fogEffect");
+
+
+// ==========================================
+// WEATHER INFORMATION
+// ==========================================
+
+function getWeatherInfo(code) {
+
+    const weather = {
+
+        0: {
+            description: "Clear Sky",
+            icon: "☀️",
+            type: "clear"
+        },
+
+        1: {
+            description: "Mainly Clear",
+            icon: "🌤️",
+            type: "clear"
+        },
+
+        2: {
+            description: "Partly Cloudy",
+            icon: "⛅",
+            type: "cloudy"
+        },
+
+        3: {
+            description: "Overcast",
+            icon: "☁️",
+            type: "cloudy"
+        },
+
+        45: {
+            description: "Fog",
+            icon: "🌫️",
+            type: "foggy"
+        },
+
+        48: {
+            description: "Rime Fog",
+            icon: "🌫️",
+            type: "foggy"
+        },
+
+        51: {
+            description: "Light Drizzle",
+            icon: "🌦️",
+            type: "rainy"
+        },
+
+        53: {
+            description: "Moderate Drizzle",
+            icon: "🌦️",
+            type: "rainy"
+        },
+
+        55: {
+            description: "Heavy Drizzle",
+            icon: "🌧️",
+            type: "heavy-rain"
+        },
+
+        56: {
+            description: "Light Freezing Drizzle",
+            icon: "🌧️",
+            type: "rainy"
+        },
+
+        57: {
+            description: "Heavy Freezing Drizzle",
+            icon: "🌧️",
+            type: "heavy-rain"
+        },
+
+        61: {
+            description: "Slight Rain",
+            icon: "🌦️",
+            type: "rainy"
+        },
+
+        63: {
+            description: "Moderate Rain",
+            icon: "🌧️",
+            type: "rainy"
+        },
+
+        65: {
+            description: "Heavy Rain",
+            icon: "🌧️",
+            type: "heavy-rain"
+        },
+
+        66: {
+            description: "Light Freezing Rain",
+            icon: "🌧️",
+            type: "rainy"
+        },
+
+        67: {
+            description: "Heavy Freezing Rain",
+            icon: "🌧️",
+            type: "heavy-rain"
+        },
+
+        71: {
+            description: "Slight Snow",
+            icon: "🌨️",
+            type: "snowy"
+        },
+
+        73: {
+            description: "Moderate Snow",
+            icon: "🌨️",
+            type: "snowy"
+        },
+
+        75: {
+            description: "Heavy Snow",
+            icon: "❄️",
+            type: "snowy"
+        },
+
+        77: {
+            description: "Snow Grains",
+            icon: "❄️",
+            type: "snowy"
+        },
+
+        80: {
+            description: "Slight Rain Showers",
+            icon: "🌦️",
+            type: "rainy"
+        },
+
+        81: {
+            description: "Moderate Rain Showers",
+            icon: "🌧️",
+            type: "rainy"
+        },
+
+        82: {
+            description: "Violent Rain Showers",
+            icon: "⛈️",
+            type: "heavy-rain"
+        },
+
+        85: {
+            description: "Slight Snow Showers",
+            icon: "🌨️",
+            type: "snowy"
+        },
+
+        86: {
+            description: "Heavy Snow Showers",
+            icon: "❄️",
+            type: "snowy"
+        },
+
+        95: {
+            description: "Thunderstorm",
+            icon: "⛈️",
+            type: "heavy-rain"
+        },
+
+        96: {
+            description: "Thunderstorm With Hail",
+            icon: "⛈️",
+            type: "heavy-rain"
+        },
+
+        99: {
+            description: "Heavy Thunderstorm",
+            icon: "⛈️",
+            type: "heavy-rain"
         }
+    };
 
-    }
-);
-
-
-// ==========================================
-// MAIN WEATHER FUNCTION
-// ==========================================
-
-async function getWeather() {
-
-    const city =
-        cityInput.value.trim();
-
-
-    // Empty input
-
-    if (city === "") {
-
-        showMessage(
-            "Please enter city name"
-        );
-
-        return;
-    }
-
-
-    // FIX: cancel any previous request
-    // still in flight before starting a
-    // new one
-
-    if (currentController) {
-
-        currentController.abort();
-
-    }
-
-    currentController =
-        new AbortController();
-
-    const { signal } =
-        currentController;
-
-
-    showMessage(
-        "Loading weather..."
-    );
-
-
-    try {
-
-        // ======================================
-        // STEP 1: FIND CITY
-        // ======================================
-
-        const geoURL =
-            "https://geocoding-api.open-meteo.com/v1/search?"
-            + "name="
-            + encodeURIComponent(city)
-            + "&count=1"
-            + "&language=en"
-            + "&format=json";
-
-
-        const geoResponse =
-            await fetch(geoURL, { signal });
-
-
-        if (!geoResponse.ok) {
-
-            throw new Error(
-                "Location API Error"
-            );
-
-        }
-
-
-        const geoData =
-            await geoResponse.json();
-
-
-        // City not found
-
-        if (
-            !geoData.results ||
-            geoData.results.length === 0
-        ) {
-
-            showMessage(
-                "City not found"
-            );
-
-            return;
-        }
-
-
-        // First result
-
-        const location =
-            geoData.results[0];
-
-
-        const latitude =
-            location.latitude;
-
-
-        const longitude =
-            location.longitude;
-
-
-        // ======================================
-        // STEP 2: GET WEATHER
-        // ======================================
-
-        await loadWeather(
-            latitude,
-            longitude,
-            location,
-            signal
-        );
-
-    }
-
-
-    catch (error) {
-
-        // FIX: don't show an error message
-        // when the request was intentionally
-        // aborted by a newer search
-
-        if (error.name === "AbortError") {
-
-            return;
-
-        }
-
-
-        console.log(error);
-
-        showMessage(
-            "Weather data load nahi ho raha"
-        );
-
-    }
-
+    return weather[code] || {
+        description: "Unknown Weather",
+        icon: "🌡️",
+        type: "clear"
+    };
 }
 
 
 // ==========================================
-// LOAD WEATHER DATA
+// TEMPERATURE FORMAT
 // ==========================================
 
-async function loadWeather(
-    latitude,
-    longitude,
-    location,
-    signal
-) {
+function formatTemperature(value) {
 
-    const weatherURL =
-        "https://api.open-meteo.com/v1/forecast?"
-        + "latitude=" + latitude
-        + "&longitude=" + longitude
-        + "&current="
-        + "temperature_2m,"
-        + "relative_humidity_2m,"
-        + "wind_speed_10m,"
-        + "weather_code"
-        + "&hourly="
-        + "temperature_2m,"
-        + "weather_code"
-        + "&daily="
-        + "weather_code,"
-        + "temperature_2m_max,"
-        + "temperature_2m_min,"
-        + "sunrise,"
-        + "sunset"
-        + "&wind_speed_unit=kmh"
-        + "&timezone=auto"
-        + "&forecast_days=7";
-
-
-    const weatherResponse =
-        await fetch(weatherURL, { signal });
-
-
-    if (!weatherResponse.ok) {
-
-        throw new Error(
-            "Weather API Error"
-        );
-
+    if (
+        value === null ||
+        value === undefined ||
+        Number.isNaN(value)
+    ) {
+        return "--";
     }
 
-
-    const data =
-        await weatherResponse.json();
-
-
-    // ======================================
-    // CURRENT WEATHER
-    // ======================================
-
-    cityName.innerText =
-        location.name
-        + (location.country
-            ? ", " + location.country
-            : "");
-
-
-    temperature.innerText =
-        Math.round(
-            data.current.temperature_2m
-        ) + "°C";
-
-
-    humidity.innerText =
-        data.current.relative_humidity_2m
-        + "%";
-
-
-    // FIX: round wind speed, it can come
-    // back with decimals (e.g. 13.7 km/h)
-
-    wind.innerText =
-        Math.round(
-            data.current.wind_speed_10m
-        ) + " km/h";
-
-
-    // Weather code
-
-    const weatherCode =
-        data.current.weather_code;
-
-
-    // Condition
-
-    condition.innerText =
-        getWeatherCondition(
-            weatherCode
-        );
-
-
-    // Icon
-
-    weatherIcon.innerText =
-        getWeatherIcon(
-            weatherCode
-        );
-
-
-    // ======================================
-    // RAIN ANIMATION
-    // ======================================
-
-    if (isRainWeather(weatherCode)) {
-
-        showRainAnimation();
-
-    }
-
-    else {
-
-        hideRainAnimation();
-
-    }
-
-
-    // ======================================
-    // SUNRISE / SUNSET
-    // ======================================
-
-    sunrise.innerText =
-        formatTime(
-            data.daily.sunrise[0]
-        );
-
-
-    sunset.innerText =
-        formatTime(
-            data.daily.sunset[0]
-        );
-
-
-    // ======================================
-    // HOURLY FORECAST
-    // ======================================
-
-    createHourlyForecast(data);
-
-
-    // ======================================
-    // 7 DAY FORECAST
-    // ======================================
-
-    createDailyForecast(data);
-
-
-    // Clear message
-
-    showMessage("");
-
+    return Math.round(value);
 }
 
 
 // ==========================================
-// CHECK RAIN WEATHER
+// TIME FORMAT
 // ==========================================
 
-function isRainWeather(code) {
+function formatTime(time) {
 
-    return (
+    if (!time) {
+        return "--:--";
+    }
 
-        // Drizzle
+    const date = new Date(time);
 
-        (code >= 51 && code <= 57)
-
-        ||
-
-        // Rain
-
-        (code >= 61 && code <= 67)
-
-        ||
-
-        // Rain showers
-
-        (code >= 80 && code <= 82)
-
-        ||
-
-        // Thunderstorm
-
-        (code >= 95 && code <= 99)
-
-    );
-
+    return date.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
 }
 
 
 // ==========================================
-// SHOW RAIN ANIMATION
+// DATE FORMAT
 // ==========================================
 
-function showRainAnimation() {
+function formatCurrentDate() {
 
-    // Clear old drops
+    const date = new Date();
 
-    rainAnimation.innerHTML = "";
-
-
-    // Create 70 rain drops
-
-    for (let i = 0; i < 70; i++) {
-
-        const drop =
-            document.createElement("span");
-
-
-        drop.className =
-            "rain-drop";
-
-
-        // Random horizontal position
-
-        drop.style.left =
-            Math.random() * 100 + "%";
-
-
-        // Random delay
-
-        drop.style.animationDelay =
-            Math.random() * 1 + "s";
-
-
-        // Random speed
-
-        drop.style.animationDuration =
-            (0.5 + Math.random() * 0.6)
-            + "s";
-
-
-        // Random height
-
-        drop.style.height =
-            (12 + Math.random() * 12)
-            + "px";
-
-
-        rainAnimation.appendChild(
-            drop
-        );
-
-    }
-
-
-    // Show animation
-
-    rainAnimation.style.display =
-        "block";
-
+    return date.toLocaleDateString("en-IN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
 }
 
 
 // ==========================================
-// HIDE RAIN ANIMATION
+// DAY FORMAT
 // ==========================================
 
-function hideRainAnimation() {
+function formatDay(dateString, index) {
 
-    rainAnimation.style.display =
-        "none";
-
-    rainAnimation.innerHTML =
-        "";
-
-}
-
-
-// ==========================================
-// 24 HOUR FORECAST
-// ==========================================
-
-function createHourlyForecast(data) {
-
-    // Clear old forecast
-
-    hourlyForecast.innerHTML = "";
-
-
-    // ======================================
-    // FIND CURRENT HOUR FROM API TIMEZONE
-    // ======================================
-
-    const currentTime =
-        data.current.time;
-
-
-    let currentIndex =
-        data.hourly.time.indexOf(
-            currentTime
-        );
-
-
-    // If exact time not found,
-    // find nearest hour
-
-    if (currentIndex === -1) {
-
-        const currentDate =
-            new Date(currentTime);
-
-
-        currentIndex =
-            data.hourly.time.findIndex(
-                function (time) {
-
-                    return (
-                        new Date(time)
-                        >= currentDate
-                    );
-
-                }
-            );
-
+    if (index === 0) {
+        return "Today";
     }
 
-
-    // FIX: findIndex also returns -1 if
-    // nothing matched (e.g. current time
-    // is after every hourly slot). The old
-    // code treated that the same as "index
-    // not found yet" and fell back to 0,
-    // which silently shows hour 0 of day 1
-    // instead of "now". Falling back to the
-    // last available index is a safer guess
-    // than jumping back to the start.
-
-    if (currentIndex < 0) {
-
-        currentIndex =
-            Math.max(
-                data.hourly.time.length - 1,
-                0
-            );
-
+    if (index === 1) {
+        return "Tomorrow";
     }
 
-
-    // ======================================
-    // SHOW NEXT 24 HOURS
-    // ======================================
-
-    for (
-        let i = 0;
-        i < 24;
-        i++
-    ) {
-
-        const index =
-            currentIndex + i;
-
-
-        // Stop if data finished
-
-        if (
-            index >=
-            data.hourly.time.length
-        ) {
-
-            break;
-
-        }
-
-
-        const time =
-            new Date(
-                data.hourly.time[index]
-            );
-
-
-        const temp =
-            Math.round(
-                data.hourly
-                    .temperature_2m[index]
-            );
-
-
-        const code =
-            data.hourly
-                .weather_code[index];
-
-
-        // ==================================
-        // CREATE CARD
-        // ==================================
-
-        const card =
-            document.createElement(
-                "div"
-            );
-
-
-        card.className =
-            "hour-card";
-
-
-        card.innerHTML = `
-
-            <p>
-                ${formatHour(time)}
-            </p>
-
-            <div class="hour-icon">
-                ${getWeatherIcon(code)}
-            </div>
-
-            <strong>
-                ${temp}°C
-            </strong>
-
-        `;
-
-
-        hourlyForecast.appendChild(
-            card
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// 7 DAY FORECAST
-// ==========================================
-
-function createDailyForecast(data) {
-
-    // Clear old forecast
-
-    forecast.innerHTML = "";
-
-
-    // 7 days
-
-    for (
-        let i = 0;
-        i < 7;
-        i++
-    ) {
-
-        const date =
-            new Date(
-                data.daily.time[i]
-            );
-
-
-        const maxTemp =
-            Math.round(
-                data.daily
-                    .temperature_2m_max[i]
-            );
-
-
-        const minTemp =
-            Math.round(
-                data.daily
-                    .temperature_2m_min[i]
-            );
-
-
-        const code =
-            data.daily
-                .weather_code[i];
-
-
-        // Create card
-
-        const card =
-            document.createElement(
-                "div"
-            );
-
-
-        card.className =
-            "forecast-card";
-
-
-        card.innerHTML = `
-
-            <p>
-                ${formatDay(date)}
-            </p>
-
-            <div class="forecast-icon">
-                ${getWeatherIcon(code)}
-            </div>
-
-            <p>
-                ${getWeatherCondition(code)}
-            </p>
-
-            <strong>
-                ${maxTemp}° / ${minTemp}°
-            </strong>
-
-        `;
-
-
-        forecast.appendChild(
-            card
-        );
-
-    }
-
-}
-
-
-// ==========================================
-// MY LOCATION
-// ==========================================
-
-locationBtn.addEventListener(
-    "click",
-    function () {
-
-
-        // Check browser support
-
-        if (!navigator.geolocation) {
-
-            showMessage(
-                "Geolocation is not supported"
-            );
-
-            return;
-        }
-
-
-        // FIX: cancel any previous search
-        // request still in flight
-
-        if (currentController) {
-
-            currentController.abort();
-
-        }
-
-        currentController =
-            new AbortController();
-
-        const { signal } =
-            currentController;
-
-
-        showMessage(
-            "Getting your location..."
-        );
-
-
-        navigator.geolocation.getCurrentPosition(
-
-            // ==================================
-            // SUCCESS
-            // ==================================
-
-            async function (position) {
-
-                const latitude =
-                    position.coords.latitude;
-
-
-                const longitude =
-                    position.coords.longitude;
-
-
-                try {
-
-                    const location = {
-
-                        name: "My Location",
-
-                        country: ""
-
-                    };
-
-
-                    await loadWeather(
-                        latitude,
-                        longitude,
-                        location,
-                        signal
-                    );
-
-                }
-
-
-                catch (error) {
-
-                    if (
-                        error.name ===
-                        "AbortError"
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    console.log(error);
-
-
-                    showMessage(
-                        "Location weather load nahi ho raha"
-                    );
-
-                }
-
-            },
-
-
-            // ==================================
-            // ERROR
-            // ==================================
-
-            function (error) {
-
-                console.log(error);
-
-
-                showMessage(
-                    "Location permission allow karo"
-                );
-
-            }
-
-        );
-
-    }
-);
-
-
-// ==========================================
-// DARK MODE
-// ==========================================
-
-darkModeBtn.addEventListener(
-    "click",
-    function () {
-
-        document.body.classList.toggle(
-            "dark-mode"
-        );
-
-
-        if (
-            document.body.classList.contains(
-                "dark-mode"
-            )
-        ) {
-
-            darkModeBtn.innerText =
-                "☀️ Light Mode";
-
-        }
-
-        else {
-
-            darkModeBtn.innerText =
-                "🌙 Dark Mode";
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// WEATHER CONDITION
-// ==========================================
-
-function getWeatherCondition(code) {
-
-    if (code === 0) {
-
-        return "Clear Sky";
-
-    }
-
-
-    if (
-        code === 1 ||
-        code === 2
-    ) {
-
-        return "Partly Cloudy";
-
-    }
-
-
-    if (code === 3) {
-
-        return "Cloudy";
-
-    }
-
-
-    if (
-        code === 45 ||
-        code === 48
-    ) {
-
-        return "Foggy";
-
-    }
-
-
-    if (
-        code >= 51 &&
-        code <= 57
-    ) {
-
-        return "Drizzle";
-
-    }
-
-
-    if (
-        code >= 61 &&
-        code <= 67
-    ) {
-
-        return "Rainy";
-
-    }
-
-
-    if (
-        code >= 71 &&
-        code <= 77
-    ) {
-
-        return "Snowy";
-
-    }
-
-
-    if (
-        code >= 80 &&
-        code <= 82
-    ) {
-
-        return "Rain Showers";
-
-    }
-
-
-    if (
-        code >= 95 &&
-        code <= 99
-    ) {
-
-        return "Thunderstorm";
-
-    }
-
-
-    return "Unknown";
-
-}
-
-
-// ==========================================
-// WEATHER ICON
-// ==========================================
-
-function getWeatherIcon(code) {
-
-    if (code === 0) {
-
-        return "☀️";
-
-    }
-
-
-    if (
-        code === 1 ||
-        code === 2
-    ) {
-
-        return "🌤️";
-
-    }
-
-
-    if (code === 3) {
-
-        return "☁️";
-
-    }
-
-
-    if (
-        code === 45 ||
-        code === 48
-    ) {
-
-        return "🌫️";
-
-    }
-
-
-    if (
-        code >= 51 &&
-        code <= 67
-    ) {
-
-        return "🌧️";
-
-    }
-
-
-    if (
-        code >= 71 &&
-        code <= 77
-    ) {
-
-        return "❄️";
-
-    }
-
-
-    if (
-        code >= 80 &&
-        code <= 82
-    ) {
-
-        return "🌦️";
-
-    }
-
-
-    if (
-        code >= 95 &&
-        code <= 99
-    ) {
-
-        return "⛈️";
-
-    }
-
-
-    return "🌤️";
-
-}
-
-
-// ==========================================
-// FORMAT TIME
-// ==========================================
-
-function formatTime(dateTime) {
-
-    const date =
-        new Date(dateTime);
-
-
-    return date.toLocaleTimeString(
-        [],
-        {
-            hour: "2-digit",
-            minute: "2-digit"
-        }
-    );
-
-}
-
-
-// ==========================================
-// FORMAT HOUR
-// ==========================================
-
-function formatHour(date) {
-
-    return date.toLocaleTimeString(
-        [],
-        {
-            hour: "2-digit",
-            minute: "2-digit"
-        }
-    );
-
-}
-
-
-// ==========================================
-// FORMAT DAY
-// ==========================================
-
-function formatDay(date) {
-
-    return date.toLocaleDateString(
-        [],
-        {
-            weekday: "short"
-        }
-    );
-
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-IN", {
+        weekday: "short"
+    });
 }
 
 
@@ -1142,9 +343,1556 @@ function formatDay(date) {
 // SHOW MESSAGE
 // ==========================================
 
-function showMessage(text) {
+function showMessage(text, type = "info") {
 
-    message.innerText =
-        text;
+    if (!message) {
+        return;
+    }
 
+    message.textContent = text;
+
+    message.className = "message";
+
+    if (type === "error") {
+        message.classList.add("error");
+    }
+
+    if (type === "success") {
+        message.classList.add("success");
+    }
 }
+
+
+// ==========================================
+// CLEAR MESSAGE
+// ==========================================
+
+function clearMessage() {
+
+    if (!message) {
+        return;
+    }
+
+    message.textContent = "";
+    message.className = "message";
+}
+
+
+// ==========================================
+// LOADING
+// ==========================================
+
+function setLoading(isLoading) {
+
+    if (loading) {
+
+        loading.classList.toggle(
+            "hidden",
+            !isLoading
+        );
+    }
+
+    if (searchBtn) {
+
+        searchBtn.disabled = isLoading;
+
+        searchBtn.textContent =
+            isLoading
+                ? "Searching..."
+                : "🔍 Search";
+    }
+
+    if (locationBtn) {
+
+        locationBtn.disabled = isLoading;
+    }
+}
+
+
+// ==========================================
+// WEATHER EFFECT
+// ==========================================
+
+function setWeatherEffect(
+    weatherType,
+    isNight = false
+) {
+
+    if (!weatherBackground) {
+        return;
+    }
+
+
+    // Reset background classes
+
+    weatherBackground.className =
+        "weather-background";
+
+
+    // Clear old effects
+
+    if (rainEffect) {
+        rainEffect.innerHTML = "";
+    }
+
+    if (snowEffect) {
+        snowEffect.innerHTML = "";
+    }
+
+    if (cloudEffect) {
+        cloudEffect.innerHTML = "";
+    }
+
+    if (sunEffect) {
+        sunEffect.innerHTML = "";
+    }
+
+    if (fogEffect) {
+        fogEffect.innerHTML = "";
+    }
+
+
+    // ======================================
+    // NIGHT
+    // ======================================
+
+    if (isNight) {
+
+        weatherBackground.classList.add(
+            "night"
+        );
+
+        createStars();
+
+        return;
+    }
+
+
+    // ======================================
+    // CLEAR
+    // ======================================
+
+    if (weatherType === "clear") {
+
+        weatherBackground.classList.add(
+            "clear"
+        );
+
+        createSun();
+
+        return;
+    }
+
+
+    // ======================================
+    // RAIN
+    // ======================================
+
+    if (weatherType === "rainy") {
+
+        weatherBackground.classList.add(
+            "rainy"
+        );
+
+        createRain(30);
+
+        return;
+    }
+
+
+    // ======================================
+    // HEAVY RAIN
+    // ======================================
+
+    if (weatherType === "heavy-rain") {
+
+        weatherBackground.classList.add(
+            "rainy"
+        );
+
+        createRain(60);
+
+        return;
+    }
+
+
+    // ======================================
+    // SNOW
+    // ======================================
+
+    if (weatherType === "snowy") {
+
+        weatherBackground.classList.add(
+            "snowy"
+        );
+
+        createSnow(25);
+
+        return;
+    }
+
+
+    // ======================================
+    // CLOUDY
+    // ======================================
+
+    if (weatherType === "cloudy") {
+
+        weatherBackground.classList.add(
+            "cloudy"
+        );
+
+        createClouds();
+
+        return;
+    }
+
+
+    // ======================================
+    // FOG
+    // ======================================
+
+    if (weatherType === "foggy") {
+
+        weatherBackground.classList.add(
+            "foggy"
+        );
+
+        createFog();
+
+        return;
+    }
+}
+
+
+// ==========================================
+// CREATE RAIN
+// ==========================================
+
+function createRain(count) {
+
+    if (!rainEffect) {
+        return;
+    }
+
+    for (let i = 0; i < count; i++) {
+
+        const drop =
+            document.createElement("span");
+
+        drop.className = "rain-drop";
+
+        drop.style.left =
+            `${Math.random() * 100}%`;
+
+        drop.style.animationDelay =
+            `${Math.random() * 2}s`;
+
+        drop.style.animationDuration =
+            `${0.5 + Math.random() * 0.7}s`;
+
+        rainEffect.appendChild(drop);
+    }
+}
+
+
+// ==========================================
+// CREATE SNOW
+// ==========================================
+
+function createSnow(count) {
+
+    if (!snowEffect) {
+        return;
+    }
+
+    for (let i = 0; i < count; i++) {
+
+        const snow =
+            document.createElement("span");
+
+        snow.className = "snowflake";
+
+        snow.textContent = "❄";
+
+        snow.style.left =
+            `${Math.random() * 100}%`;
+
+        snow.style.fontSize =
+            `${8 + Math.random() * 10}px`;
+
+        snow.style.animationDelay =
+            `${Math.random() * 5}s`;
+
+        snow.style.animationDuration =
+            `${5 + Math.random() * 5}s`;
+
+        snowEffect.appendChild(snow);
+    }
+}
+
+
+// ==========================================
+// CREATE CLOUDS
+// ==========================================
+
+function createClouds() {
+
+    if (!cloudEffect) {
+        return;
+    }
+
+    for (let i = 0; i < 5; i++) {
+
+        const cloud =
+            document.createElement("div");
+
+        cloud.className =
+            "weather-cloud";
+
+        cloud.style.top =
+            `${10 + Math.random() * 50}%`;
+
+        cloud.style.left =
+            `${Math.random() * 90}%`;
+
+        cloud.style.animationDelay =
+            `${Math.random() * 5}s`;
+
+        cloudEffect.appendChild(cloud);
+    }
+}
+
+
+// ==========================================
+// CREATE SUN
+// ==========================================
+
+function createSun() {
+
+    if (!sunEffect) {
+        return;
+    }
+
+    const sun =
+        document.createElement("div");
+
+    sun.className =
+        "sun-glow";
+
+    sunEffect.appendChild(sun);
+}
+
+
+// ==========================================
+// CREATE FOG
+// ==========================================
+
+function createFog() {
+
+    if (!fogEffect) {
+        return;
+    }
+
+    for (let i = 0; i < 3; i++) {
+
+        const fog =
+            document.createElement("div");
+
+        fog.className =
+            "fog-layer";
+
+        fog.style.top =
+            `${25 + i * 20}%`;
+
+        fog.style.animationDelay =
+            `${i * 2}s`;
+
+        fogEffect.appendChild(fog);
+    }
+}
+
+
+// ==========================================
+// CREATE STARS
+// ==========================================
+
+function createStars() {
+
+    if (!weatherBackground) {
+        return;
+    }
+
+    for (let i = 0; i < 20; i++) {
+
+        const star =
+            document.createElement("span");
+
+        star.className =
+            "night-star";
+
+        star.style.left =
+            `${Math.random() * 100}%`;
+
+        star.style.top =
+            `${Math.random() * 70}%`;
+
+        star.style.animationDelay =
+            `${Math.random() * 3}s`;
+
+        weatherBackground.appendChild(star);
+    }
+}
+
+
+// ==========================================
+// SEARCH CITY
+// ==========================================
+
+async function searchCity() {
+
+    const input =
+        cityInput
+            ? cityInput.value.trim()
+            : "";
+
+
+    if (!input) {
+
+        showMessage(
+            "Please enter a city, state or PIN code.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    setLoading(true);
+
+    showMessage(
+        "Searching location..."
+    );
+
+
+    try {
+
+        // ======================================
+        // INDIA SEARCH
+        // ======================================
+
+        const indiaUrl =
+            `${GEOCODING_API}` +
+            `?name=${encodeURIComponent(input)}` +
+            `&count=10` +
+            `&language=en` +
+            `&format=json` +
+            `&countryCode=IN`;
+
+
+        const indiaResponse =
+            await fetch(indiaUrl);
+
+
+        if (!indiaResponse.ok) {
+            throw new Error(
+                "India location search failed"
+            );
+        }
+
+
+        const indiaData =
+            await indiaResponse.json();
+
+
+        let results =
+            indiaData.results || [];
+
+
+        // ======================================
+        // GLOBAL SEARCH IF INDIA RESULT NOT FOUND
+        // ======================================
+
+        if (results.length === 0) {
+
+            const globalUrl =
+                `${GEOCODING_API}` +
+                `?name=${encodeURIComponent(input)}` +
+                `&count=10` +
+                `&language=en` +
+                `&format=json`;
+
+
+            const globalResponse =
+                await fetch(globalUrl);
+
+
+            if (!globalResponse.ok) {
+                throw new Error(
+                    "Global location search failed"
+                );
+            }
+
+
+            const globalData =
+                await globalResponse.json();
+
+
+            results =
+                globalData.results || [];
+        }
+
+
+        // ======================================
+        // NO RESULT
+        // ======================================
+
+        if (results.length === 0) {
+
+            showMessage(
+                "Location not found. Try another city, state or PIN code.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        // ======================================
+        // FIND BEST RESULT
+        // ======================================
+
+        const inputLower =
+            input.toLowerCase();
+
+
+        // Exact Indian name
+
+        let selectedLocation =
+            results.find(result =>
+
+                result.name &&
+                result.name.toLowerCase() ===
+                    inputLower &&
+
+                result.country_code &&
+                result.country_code.toLowerCase() ===
+                    "in"
+            );
+
+
+        // Any exact name
+
+        if (!selectedLocation) {
+
+            selectedLocation =
+                results.find(result =>
+
+                    result.name &&
+                    result.name.toLowerCase() ===
+                        inputLower
+                );
+        }
+
+
+        // Indian result
+
+        if (!selectedLocation) {
+
+            selectedLocation =
+                results.find(result =>
+
+                    result.country_code &&
+                    result.country_code.toLowerCase() ===
+                        "in"
+                );
+        }
+
+
+        // First result
+
+        if (!selectedLocation) {
+
+            selectedLocation =
+                results[0];
+        }
+
+
+        console.log(
+            "Selected Location:",
+            selectedLocation
+        );
+
+
+        // ======================================
+        // GET WEATHER
+        // ======================================
+
+        await getWeather(
+
+            selectedLocation.latitude,
+
+            selectedLocation.longitude,
+
+            selectedLocation.name,
+
+            selectedLocation.country,
+
+            selectedLocation.admin1 || ""
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Search Error:",
+            error
+        );
+
+
+        showMessage(
+            "Unable to find weather. Please check your internet connection.",
+            "error"
+        );
+
+    } finally {
+
+        setLoading(false);
+    }
+}
+
+
+// ==========================================
+// GET WEATHER
+// ==========================================
+
+async function getWeather(
+    latitude,
+    longitude,
+    locationName,
+    country,
+    state = ""
+) {
+
+    try {
+
+        showMessage(
+            "Loading weather..."
+        );
+
+
+        const url =
+            `${WEATHER_API}` +
+            `?latitude=${latitude}` +
+            `&longitude=${longitude}` +
+
+            `&current=` +
+            `temperature_2m,` +
+            `relative_humidity_2m,` +
+            `apparent_temperature,` +
+            `is_day,` +
+            `precipitation,` +
+            `rain,` +
+            `weather_code,` +
+            `surface_pressure,` +
+            `wind_speed_10m` +
+
+            `&hourly=` +
+            `temperature_2m,` +
+            `weather_code,` +
+            `precipitation_probability` +
+
+            `&daily=` +
+            `weather_code,` +
+            `temperature_2m_max,` +
+            `temperature_2m_min,` +
+            `sunrise,` +
+            `sunset,` +
+            `uv_index_max` +
+
+            `&timezone=auto` +
+            `&forecast_days=7`;
+
+
+        const response =
+            await fetch(url);
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Weather API failed"
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        // ======================================
+        // SAVE LOCATION
+        // ======================================
+
+        window.currentWeatherLocation = {
+
+            latitude,
+            longitude,
+
+            name: locationName,
+
+            country,
+
+            state
+        };
+
+
+        // ======================================
+        // RENDER DATA
+        // ======================================
+
+        renderCurrentWeather(
+            data,
+            locationName,
+            country,
+            state
+        );
+
+
+        renderHourlyForecast(data);
+
+        renderDailyForecast(data);
+
+
+        // ======================================
+        // WEATHER EFFECT
+        // ======================================
+
+        const currentCode =
+            data.current?.weather_code;
+
+
+        const weatherInfo =
+            getWeatherInfo(currentCode);
+
+
+        const isNight =
+            data.current?.is_day === 0;
+
+
+        setWeatherEffect(
+            weatherInfo.type,
+            isNight
+        );
+
+
+        clearMessage();
+
+
+    } catch (error) {
+
+        console.error(
+            "Weather Error:",
+            error
+        );
+
+
+        showMessage(
+            "Unable to load weather information.",
+            "error"
+        );
+    }
+}
+
+
+// ==========================================
+// CURRENT WEATHER
+// ==========================================
+
+function renderCurrentWeather(
+    data,
+    locationName,
+    country,
+    state
+) {
+
+    const current =
+        data.current;
+
+
+    if (!current) {
+        return;
+    }
+
+
+    const weatherInfo =
+        getWeatherInfo(
+            current.weather_code
+        );
+
+
+    // ======================================
+    // CITY
+    // ======================================
+
+    if (cityName) {
+
+        cityName.textContent =
+            locationName ||
+            "Unknown Location";
+    }
+
+
+    // ======================================
+    // DATE
+    // ======================================
+
+    if (currentDate) {
+
+        currentDate.textContent =
+            state && country
+
+                ? `${state}, ${country} • ${formatCurrentDate()}`
+
+                : formatCurrentDate();
+    }
+
+
+    // ======================================
+    // TEMPERATURE
+    // ======================================
+
+    if (temperature) {
+
+        temperature.textContent =
+            formatTemperature(
+                current.temperature_2m
+            );
+    }
+
+
+    // ======================================
+    // WEATHER DESCRIPTION
+    // ======================================
+
+    if (weatherDescription) {
+
+        weatherDescription.textContent =
+            weatherInfo.description;
+    }
+
+
+    // ======================================
+    // WEATHER ICON
+    // ======================================
+
+    if (weatherIcon) {
+
+        weatherIcon.textContent =
+            weatherInfo.icon;
+    }
+
+
+    // ======================================
+    // FEELS LIKE
+    // ======================================
+
+    if (feelsLike) {
+
+        feelsLike.textContent =
+            `Feels like ${formatTemperature(
+                current.apparent_temperature
+            )}°C`;
+    }
+
+
+    // ======================================
+    // HUMIDITY
+    // ======================================
+
+    if (humidity) {
+
+        humidity.textContent =
+            `${Math.round(
+                current.relative_humidity_2m
+            )}%`;
+    }
+
+
+    // ======================================
+    // WIND
+    // ======================================
+
+    if (windSpeed) {
+
+        windSpeed.textContent =
+            `${Math.round(
+                current.wind_speed_10m
+            )} km/h`;
+    }
+
+
+    // ======================================
+    // PRESSURE
+    // ======================================
+
+    if (pressure) {
+
+        pressure.textContent =
+            `${Math.round(
+                current.surface_pressure
+            )} hPa`;
+    }
+
+
+    // ======================================
+    // UV
+    // ======================================
+
+    if (uvIndex) {
+
+        const uv =
+            data.daily?.uv_index_max?.[0];
+
+
+        uvIndex.textContent =
+            uv !== undefined
+                ? Math.round(uv)
+                : "--";
+    }
+
+
+    // ======================================
+    // SUNRISE
+    // ======================================
+
+    if (sunrise) {
+
+        sunrise.textContent =
+            formatTime(
+                data.daily?.sunrise?.[0]
+            );
+    }
+
+
+    // ======================================
+    // SUNSET
+    // ======================================
+
+    if (sunset) {
+
+        sunset.textContent =
+            formatTime(
+                data.daily?.sunset?.[0]
+            );
+    }
+}
+
+
+// ==========================================
+// HOURLY FORECAST
+// ==========================================
+
+function renderHourlyForecast(data) {
+
+    if (!hourlyContainer) {
+        return;
+    }
+
+
+    hourlyContainer.innerHTML = "";
+
+
+    const hourly =
+        data.hourly;
+
+
+    if (!hourly || !hourly.time) {
+        return;
+    }
+
+
+    const currentTime =
+        new Date();
+
+
+    let startIndex =
+        hourly.time.findIndex(
+            time =>
+                new Date(time) >=
+                currentTime
+        );
+
+
+    if (startIndex === -1) {
+        startIndex = 0;
+    }
+
+
+    const endIndex =
+        Math.min(
+            startIndex + 24,
+            hourly.time.length
+        );
+
+
+    for (
+        let i = startIndex;
+        i < endIndex;
+        i++
+    ) {
+
+        const time =
+            new Date(
+                hourly.time[i]
+            );
+
+
+        const weatherInfo =
+            getWeatherInfo(
+                hourly.weather_code[i]
+            );
+
+
+        const temp =
+            hourly.temperature_2m[i];
+
+
+        const rainProbability =
+            hourly.precipitation_probability?.[i] ?? 0;
+
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "hourly-item";
+
+
+        item.innerHTML = `
+
+            <div class="hour-time">
+
+                ${
+                    i === startIndex
+
+                        ? "Now"
+
+                        : time.toLocaleTimeString(
+                            "en-IN",
+                            {
+                                hour: "numeric",
+                                hour12: true
+                            }
+                        )
+                }
+
+            </div>
+
+
+            <div class="hour-icon">
+                ${weatherInfo.icon}
+            </div>
+
+
+            <div class="hour-temp">
+                ${formatTemperature(temp)}°
+            </div>
+
+
+            <div class="hour-rain">
+                💧 ${rainProbability}%
+            </div>
+
+        `;
+
+
+        hourlyContainer.appendChild(item);
+    }
+}
+
+
+// ==========================================
+// DAILY FORECAST
+// ==========================================
+
+function renderDailyForecast(data) {
+
+    if (!dailyContainer) {
+        return;
+    }
+
+
+    dailyContainer.innerHTML = "";
+
+
+    const daily =
+        data.daily;
+
+
+    if (!daily || !daily.time) {
+        return;
+    }
+
+
+    for (
+        let i = 0;
+        i < daily.time.length;
+        i++
+    ) {
+
+        const weatherInfo =
+            getWeatherInfo(
+                daily.weather_code[i]
+            );
+
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "daily-item";
+
+
+        item.innerHTML = `
+
+            <div class="day-name">
+
+                ${formatDay(
+                    daily.time[i],
+                    i
+                )}
+
+            </div>
+
+
+            <div class="day-icon">
+                ${weatherInfo.icon}
+            </div>
+
+
+            <div class="day-condition">
+
+                ${weatherInfo.description}
+
+            </div>
+
+
+            <div class="day-temp">
+
+                <strong>
+
+                    ${formatTemperature(
+                        daily.temperature_2m_max[i]
+                    )}°
+
+                </strong>
+
+
+                <span>
+
+                    ${formatTemperature(
+                        daily.temperature_2m_min[i]
+                    )}°
+
+                </span>
+
+            </div>
+
+        `;
+
+
+        dailyContainer.appendChild(item);
+    }
+}
+
+
+// ==========================================
+// MY LOCATION
+// ==========================================
+
+function getMyLocation() {
+
+    if (!navigator.geolocation) {
+
+        showMessage(
+            "Geolocation is not supported by your browser.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessage(
+        "Getting your location..."
+    );
+
+
+    if (locationBtn) {
+        locationBtn.disabled = true;
+        locationBtn.textContent = "📍 Locating...";
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async position => {
+
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+
+            try {
+
+                // ==================================
+                // REVERSE GEOCODING
+                // ==================================
+
+                const url =
+                    `${REVERSE_GEOCODING_API}` +
+                    `?lat=${latitude}` +
+                    `&lon=${longitude}` +
+                    `&format=json` +
+                    `&accept-language=en`;
+
+
+                const response =
+                    await fetch(url);
+
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Reverse geocoding failed"
+                    );
+                }
+
+
+                const locationData =
+                    await response.json();
+
+
+                const address =
+                    locationData.address || {};
+
+
+                const locationName =
+                    address.city ||
+                    address.town ||
+                    address.village ||
+                    address.municipality ||
+                    address.county ||
+                    "My Location";
+
+
+                const state =
+                    address.state || "";
+
+
+                const country =
+                    address.country || "";
+
+
+                if (cityInput) {
+                    cityInput.value =
+                        locationName;
+                }
+
+
+                updateClearButton();
+
+
+                await getWeather(
+
+                    latitude,
+
+                    longitude,
+
+                    locationName,
+
+                    country,
+
+                    state
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Location name error:",
+                    error
+                );
+
+
+                await getWeather(
+
+                    latitude,
+
+                    longitude,
+
+                    "My Location",
+
+                    "",
+
+                    ""
+                );
+            }
+
+
+            if (locationBtn) {
+
+                locationBtn.disabled = false;
+
+                locationBtn.textContent =
+                    "📍 My Location";
+            }
+        },
+
+
+        error => {
+
+            console.error(
+                "Geolocation Error:",
+                error
+            );
+
+
+            let errorMessage =
+                "Unable to get your location.";
+
+
+            if (error.code === 1) {
+
+                errorMessage =
+                    "Location permission denied. Please allow location access.";
+            }
+
+
+            if (error.code === 2) {
+
+                errorMessage =
+                    "Location information is unavailable.";
+            }
+
+
+            if (error.code === 3) {
+
+                errorMessage =
+                    "Location request timed out.";
+            }
+
+
+            showMessage(
+                errorMessage,
+                "error"
+            );
+
+
+            if (locationBtn) {
+
+                locationBtn.disabled = false;
+
+                locationBtn.textContent =
+                    "📍 My Location";
+            }
+        },
+
+
+        {
+            enableHighAccuracy: false,
+            timeout: 15000,
+            maximumAge: 300000
+        }
+    );
+}
+
+
+// ==========================================
+// DARK MODE
+// ==========================================
+
+function setDarkMode(enabled) {
+
+    document.body.classList.toggle(
+        "dark-mode",
+        enabled
+    );
+
+
+    if (darkModeBtn) {
+
+        darkModeBtn.innerHTML =
+            enabled
+                ? "☀️ <span id=\"modeText\">Light Mode</span>"
+                : "🌙 <span id=\"modeText\">Dark Mode</span>";
+    }
+
+
+    localStorage.setItem(
+        "weatherlyDarkMode",
+        enabled
+    );
+}
+
+
+// ==========================================
+// LOAD DARK MODE
+// ==========================================
+
+function loadDarkMode() {
+
+    const saved =
+        localStorage.getItem(
+            "weatherlyDarkMode"
+        );
+
+
+    setDarkMode(
+        saved === "true"
+    );
+}
+
+
+// ==========================================
+// CLEAR BUTTON
+// ==========================================
+
+function updateClearButton() {
+
+    if (!clearBtn || !cityInput) {
+        return;
+    }
+
+
+    clearBtn.style.display =
+        cityInput.value.trim()
+            ? "block"
+            : "none";
+}
+
+
+// ==========================================
+// SEARCH BUTTON
+// ==========================================
+
+if (searchBtn) {
+
+    searchBtn.addEventListener(
+        "click",
+        searchCity
+    );
+}
+
+
+// ==========================================
+// ENTER KEY
+// ==========================================
+
+if (cityInput) {
+
+    cityInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                searchCity();
+            }
+        }
+    );
+
+
+    cityInput.addEventListener(
+        "input",
+        updateClearButton
+    );
+}
+
+
+// ==========================================
+// CLEAR BUTTON
+// ==========================================
+
+if (clearBtn) {
+
+    clearBtn.addEventListener(
+        "click",
+        () => {
+
+            if (cityInput) {
+
+                cityInput.value = "";
+
+                cityInput.focus();
+            }
+
+
+            updateClearButton();
+
+            clearMessage();
+        }
+    );
+}
+
+
+// ==========================================
+// MY LOCATION BUTTON
+// ==========================================
+
+if (locationBtn) {
+
+    locationBtn.addEventListener(
+        "click",
+        getMyLocation
+    );
+}
+
+
+// ==========================================
+// DARK MODE BUTTON
+// ==========================================
+
+if (darkModeBtn) {
+
+    darkModeBtn.addEventListener(
+        "click",
+        () => {
+
+            const enabled =
+                !document.body.classList.contains(
+                    "dark-mode"
+                );
+
+
+            setDarkMode(enabled);
+        }
+    );
+}
+
+
+// ==========================================
+// INITIAL SETUP
+// ==========================================
+
+loadDarkMode();
+
+updateClearButton();
+
+
+// ==========================================
+// NO DEFAULT CITY
+// ==========================================
+// Weather will NOT automatically show Haridwar.
+// User must search or click My Location.
+// ==========================================
+
+console.log(
+    "Weatherly JavaScript loaded successfully."
+);
